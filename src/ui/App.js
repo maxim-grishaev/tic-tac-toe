@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { createBoard, CELL_STATE, GAME_STATE } from '../lib/board';
+import { createBoard, PLAYERS, GAME_STATE } from '../lib/board';
 import { minimax, nextMove } from '../lib/player';
 
 import GameStatus from './GameStatus';
@@ -19,11 +19,11 @@ class App extends Component {
 
   move = index => {
     this.setState(state => {
-      this.board[index] = CELL_STATE.PLAYER_X;
+      this.board[index] = PLAYERS.PLAYER_X;
 
       const p0Index = nextMove(this.board);
       if (p0Index != null) {
-        this.board[p0Index] = CELL_STATE.PLAYER_0;
+        this.board[p0Index] = PLAYERS.PLAYER_0;
       }
 
       // console.log('[19:06:33] App.js >>> move', minimax(this.board, CELL_STATE.PLAYER_0));

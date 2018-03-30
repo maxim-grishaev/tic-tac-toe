@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Div } from 'glamorous';
 
-import { CELL_STATE, chopBoard } from '../lib/board';
+import { PLAYERS, chopBoard } from '../lib/board';
 
 class Cell extends Component {
   static propTypes = {
@@ -65,9 +65,9 @@ function Board({ board, onClick }) {
               ++globalIndex;
               return (
                 <td key={yi} title={val}>
-                  {val === CELL_STATE.PLAYER_X && <Cell index={globalIndex}>X</Cell>}
-                  {val === CELL_STATE.PLAYER_0 && <Cell index={globalIndex}>0</Cell>}
-                  {val === CELL_STATE.NONE && (
+                  {val === PLAYERS.PLAYER_X && <Cell index={globalIndex}>X</Cell>}
+                  {val === PLAYERS.PLAYER_0 && <Cell index={globalIndex}>0</Cell>}
+                  {val === PLAYERS.NOBODY && (
                     <Cell index={globalIndex} onClick={onClick}>
                       &nbsp;
                     </Cell>

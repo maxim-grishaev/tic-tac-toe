@@ -1,7 +1,7 @@
 export const BOARD_SIZE = 3;
 
-export const CELL_STATE = {
-  NONE: '_',
+export const PLAYERS = {
+  NOBODY: '_',
   PLAYER_X: 'X',
   PLAYER_0: '0'
 };
@@ -14,15 +14,15 @@ export const GAME_STATE = {
 };
 
 export const createBoard = () => [
-  CELL_STATE.NONE,
-  CELL_STATE.NONE,
-  CELL_STATE.NONE,
-  CELL_STATE.NONE,
-  CELL_STATE.NONE,
-  CELL_STATE.NONE,
-  CELL_STATE.NONE,
-  CELL_STATE.NONE,
-  CELL_STATE.NONE
+  PLAYERS.NOBODY,
+  PLAYERS.NOBODY,
+  PLAYERS.NOBODY,
+  PLAYERS.NOBODY,
+  PLAYERS.NOBODY,
+  PLAYERS.NOBODY,
+  PLAYERS.NOBODY,
+  PLAYERS.NOBODY,
+  PLAYERS.NOBODY
 ];
 
 /*
@@ -47,17 +47,28 @@ const LINES = [
 const hasLineOf = (cellState, board) => LINES.some(line => line.every(coord => board[coord] === cellState));
 const hasAnyOfType = (cellState, board) => board.some(value => value === cellState);
 
-export const getIndexesOfCellState = (cellState, board) =>
+export const getIndexesByPlayer = (cellState, board) =>
   board.map((val, i) => (val === cellState ? i : null)).filter(val => val != null);
 
 export const getGameState = board => {
-  if (hasLineOf(CELL_STATE.PLAYER_X, board)) {
+  if (hasLineOf(PLAYERS.PLAYER_X, board)) {
     return GAME_STATE.WIN_X;
   }
-  if (hasLineOf(CELL_STATE.PLAYER_0, board)) {
+  if (hasLineOf(PLAYERS.PLAYER_0, board)) {
     return GAME_STATE.WIN_0;
   }
-  return hasAnyOfType(CELL_STATE.NONE, board) ? GAME_STATE.PLAYING : GAME_STATE.DRAW;
+  return hasAnyOfType(PLAYERS.NOBODY, board) ? GAME_STATE.PLAYING : GAME_STATE.DRAW;
+};
+
+export const isWinner = (player, board) => hasLineOf(player, board);
+
+export const opponent = player => (player === PLAYERS.PLAYER_0 ? PLAYERS.PLAYER_X : PLAYERS.PLAYER_0);
+
+export const isLooser = (player, board) => hasLineOf(opponent(player), board);
+
+export const isDraw = board => {
+  const gameState = getGameState(board);
+  return gameState === GAME_STATE.DRAW;
 };
 
 export const chopBoard = (board, sliceSize = BOARD_SIZE) =>

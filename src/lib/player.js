@@ -1,62 +1,50 @@
-import { CELL_STATE, GAME_STATE, getGameState, getIndexesOfCellState } from './board';
+import { PLAYERS, getIndexesByPlayer, isWinner, isLooser, isDraw, opponent } from './board';
 
 /*
  * https://www.neverstopbuilding.com/blog/2013/12/13/tic-tac-toe-understanding-the-minimax-algorithm13];
  */
-export const nextMove = board => getIndexesOfCellState(CELL_STATE.NONE, board)[0];
+export const nextMove = board => {
+  const move = minimax(board, PLAYERS.PLAYER_0);
+  return move.index;
+};
 
-export function minimax(board, player) {
-  let freeCells = getIndexesOfCellState(CELL_STATE.NONE, board);
-  const gameState = getGameState(board);
-  switch (gameState) {
-    case GAME_STATE.PLAYER_X:
-      return {
-        score: -10
-      };
-    case GAME_STATE.PLAYER_0:
-      return {
-        score: 10
-      };
-    case GAME_STATE.DRAW:
-      return {
-        score: 0
-      };
+const createMove = (score = -Infinity, index = null) => ({ index, score });
+
+function minimax(board, player) {
+  if (isWinner(player, board)) {
+    return createMove(10);
   }
 
-  const moves = [];
-  for (let i = 0; i < freeCells.length; i++) {
-    const move = {};
-    move.index = board[freeCells[i]];
-    board[freeCells[i]] = player;
-
-    if (player === CELL_STATE.PLAYER_0) {
-      const g = minimax(board, CELL_STATE.PLAYER_X);
-      move.score = g.score;
-    } else {
-      const g = minimax(board, CELL_STATE.PLAYER_0);
-      move.score = g.score;
-    }
-    board[freeCells[i]] = move.index;
-    moves.push(move);
+  if (isLooser(player, board)) {
+    return createMove(-10);
   }
 
-  let bestMove;
-  if (player === CELL_STATE.PLAYER_0) {
-    let bestScore = -10000;
-    for (let i = 0; i < moves.length; i++) {
-      if (moves[i].score > bestScore) {
-        bestScore = moves[i].score;
-        bestMove = i;
-      }
-    }
-  } else {
-    let bestScore = 10000;
-    for (let i = 0; i < moves.length; i++) {
-      if (moves[i].score < bestScore) {
-        bestScore = moves[i].score;
-        bestMove = i;
-      }
-    }
+  if (isDraw(board)) {
+    return createMove(0);
   }
-  return moves[bestMove];
+
+  let freeCells = getIndexesByPlayer(PLAYERS.NOBODY, board);
+  if (freeCells.length === 0) {
+    throw new Error(`Invalid board: ${JSON.stringify(board)}`);
+  }
+  const bestMove = freeCells.reduce((prevMove, cellIndex) => {
+    const secondPlayer = opponent(player);
+    const newBoard = [...board];
+    newBoard[cellIndex] = player;
+
+    const g = minimax(newBoard, secondPlayer);
+    const move = createMove(-g.score, cellIndex);
+
+    if (move.score === prevMove.score) {
+      return Math.random() > 0.5 ? move : prevMove;
+    }
+
+    if (move.score > prevMove.score) {
+      return move;
+    }
+
+    return prevMove;
+  }, createMove());
+
+  return bestMove;
 }
