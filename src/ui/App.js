@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
-import { createBoard, PLAYERS, GAME_STATE } from '../lib/board';
-import { minimax, nextMove } from '../lib/player';
+import { createBoard, PLAYERS } from '../lib/board';
+import { nextMove } from '../lib/player';
 
 import GameStatus from './GameStatus';
 import Layout from './Layout';
@@ -26,7 +26,6 @@ class App extends Component {
         this.board[p0Index] = PLAYERS.PLAYER_0;
       }
 
-      // console.log('[19:06:33] App.js >>> move', minimax(this.board, CELL_STATE.PLAYER_0));
       return {
         stepIndex: state.stepIndex + 1
       };

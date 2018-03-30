@@ -3,8 +3,8 @@ import { PLAYERS, getIndexesByPlayer, isWinner, isLooser, isDraw, opponent } fro
 /*
  * https://www.neverstopbuilding.com/blog/2013/12/13/tic-tac-toe-understanding-the-minimax-algorithm13];
  */
-export const nextMove = board => {
-  const move = minimax(board, PLAYERS.PLAYER_0);
+export const nextMove = (board, player = PLAYERS.PLAYER_0) => {
+  const move = minimax(board, player);
   return move.index;
 };
 
@@ -27,7 +27,7 @@ function minimax(board, player) {
   if (freeCells.length === 0) {
     throw new Error(`Invalid board: ${JSON.stringify(board)}`);
   }
-  const bestMove = freeCells.reduce((prevMove, cellIndex) => {
+  const bestMove = freeCells.reduce((bestMoveSoFar, cellIndex) => {
     const secondPlayer = opponent(player);
     const newBoard = [...board];
     newBoard[cellIndex] = player;
@@ -35,15 +35,16 @@ function minimax(board, player) {
     const g = minimax(newBoard, secondPlayer);
     const move = createMove(-g.score, cellIndex);
 
-    if (move.score === prevMove.score) {
-      return Math.random() > 0.5 ? move : prevMove;
+    // A bit of random for little more interest
+    if (move.score === bestMoveSoFar.score) {
+      return Math.random() * 2 > 1 ? move : bestMoveSoFar;
     }
 
-    if (move.score > prevMove.score) {
+    if (move.score > bestMoveSoFar.score) {
       return move;
     }
 
-    return prevMove;
+    return bestMoveSoFar;
   }, createMove());
 
   return bestMove;
