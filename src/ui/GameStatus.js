@@ -37,7 +37,7 @@ export default function GameStatus({ board, player, stepIndex, currentPlayer, on
           margin: '20px 0 0'
         }}
       >
-        {gameState !== GAME_STATE.PLAYING && <button onClick={onRestart}>Start again!</button>}
+        <button onClick={onRestart}>Restart</button>
         <div
           style={{
             color: 'gray',

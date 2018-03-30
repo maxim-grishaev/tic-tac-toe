@@ -9,7 +9,7 @@ TODO
 - [x] AI
 - [x] Tests: test lib methods
 - [x] Cleanup layouts, remove tables
-- [ ] Two-player mode
+- [x] Two-player mode
 - [ ] Type checker: Flow or TypeScript
 - [ ] precommit hook
 - [ ] Better Readme: describe solutions and usage

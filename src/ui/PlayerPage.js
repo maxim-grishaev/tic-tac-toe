@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import GameStatus from './GameStatus';
-import Layout from './Layout';
 import Board from './Board';
-
-import '../assets/reset.css';
 
 class PlayerPage extends Component {
   static propTypes = {
@@ -20,23 +17,21 @@ class PlayerPage extends Component {
 
   render() {
     return (
-      <Layout title="Welcome to Tic-Tac-Toe">
-        <GameStatus
+      <GameStatus
+        board={this.props.board}
+        player={this.props.player}
+        currentPlayer={this.props.currentPlayer}
+        stepIndex={this.props.stepIndex}
+        onRestart={this.startAgain}
+      >
+        <Board
           board={this.props.board}
           player={this.props.player}
           currentPlayer={this.props.currentPlayer}
           stepIndex={this.props.stepIndex}
-          onRestart={this.startAgain}
-        >
-          <Board
-            board={this.props.board}
-            player={this.props.player}
-            currentPlayer={this.props.currentPlayer}
-            stepIndex={this.props.stepIndex}
-            onClick={this.move}
-          />
-        </GameStatus>
-      </Layout>
+          onClick={this.move}
+        />
+      </GameStatus>
     );
   }
 }

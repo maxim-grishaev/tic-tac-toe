@@ -131,7 +131,7 @@ function Board({ board, player, currentPlayer, onClick, children }) {
             {val === PLAYERS.PLAYER_X && <Cell index={i}>X</Cell>}
             {val === PLAYERS.PLAYER_0 && <Cell index={i}>0</Cell>}
             {val === PLAYERS.NOBODY && (
-              <Cell index={i} onClick={!disabled && onClick}>
+              <Cell index={i} onClick={disabled ? undefined : onClick}>
                 &nbsp;
               </Cell>
             )}

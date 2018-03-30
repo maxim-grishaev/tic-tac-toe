@@ -3,17 +3,19 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import logo from '../assets/logo.svg';
 
+import '../assets/reset.css';
+
 const rotate = css.keyframes({
   from: { transform: 'rotate(0deg)' },
   to: { transform: 'rotate(360deg)' }
 });
 
-Header.propTypes = {
+Layout.propTypes = {
   title: PropTypes.node,
   children: PropTypes.node
 };
 
-export default function Header({ title, children }) {
+export default function Layout({ title, children }) {
   return (
     <div style={{ textAlign: 'center' }}>
       <header
