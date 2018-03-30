@@ -1,3 +1,4 @@
+// @flow
 export const PLAYERS = {
   NOBODY: '_',
   PLAYER_X: 'X',
@@ -11,7 +12,11 @@ export const GAME_STATE = {
   DRAW: 'draw'
 };
 
-export const createBoard = () => [
+export type TPlayers = $Values<typeof PLAYERS>;
+export type TGameState = $Values<typeof GAME_STATE>;
+export type TBoard = Array<TPlayers>;
+
+export const createBoard = (): TBoard => [
   PLAYERS.NOBODY,
   PLAYERS.NOBODY,
   PLAYERS.NOBODY,
@@ -42,13 +47,14 @@ const LINES = [
   [2, 4, 6]
 ];
 
-const hasLineOf = (cellState, board) => LINES.some(line => line.every(coord => board[coord] === cellState));
-const hasAnyOfType = (cellState, board) => board.some(value => value === cellState);
+const hasLineOf = (player: TPlayers, board: TBoard): boolean =>
+  LINES.some(line => line.every(coord => board[coord] === player));
+const hasAnyOfType = (player: TPlayers, board: TBoard): boolean => board.some(value => value === player);
 
-export const getIndexesByPlayer = (cellState, board) =>
-  board.map((val, i) => (val === cellState ? i : null)).filter(val => val != null);
+export const getIndexesByPlayer = (player: TPlayers, board: TBoard): number[] =>
+  board.map((val, i) => (val === player ? i : -1)).filter(val => val !== -1);
 
-export const getGameState = board => {
+export const getGameState = (board: TBoard): TGameState => {
   if (hasLineOf(PLAYERS.PLAYER_X, board)) {
     return GAME_STATE.WIN_X;
   }
@@ -58,13 +64,14 @@ export const getGameState = board => {
   return hasAnyOfType(PLAYERS.NOBODY, board) ? GAME_STATE.PLAYING : GAME_STATE.DRAW;
 };
 
-export const isWinner = (player, board) => hasLineOf(player, board);
+export const isWinner = (player: TPlayers, board: TBoard): boolean => hasLineOf(player, board);
 
-export const opponent = player => (player === PLAYERS.PLAYER_0 ? PLAYERS.PLAYER_X : PLAYERS.PLAYER_0);
+export const opponent = (player: TPlayers): TPlayers =>
+  player === PLAYERS.PLAYER_0 ? PLAYERS.PLAYER_X : PLAYERS.PLAYER_0;
 
-export const isLooser = (player, board) => hasLineOf(opponent(player), board);
+export const isLooser = (player: TPlayers, board: TBoard): boolean => hasLineOf(opponent(player), board);
 
-export const isDraw = board => {
+export const isDraw = (board: TBoard): boolean => {
   const gameState = getGameState(board);
   return gameState === GAME_STATE.DRAW;
 };

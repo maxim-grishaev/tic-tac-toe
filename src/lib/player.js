@@ -1,16 +1,22 @@
+// @flow
 import { PLAYERS, getIndexesByPlayer, isWinner, isLooser, isDraw, opponent } from './board';
+import type { TBoard, TPlayers } from './board';
 
 /*
  * https://www.neverstopbuilding.com/blog/2013/12/13/tic-tac-toe-understanding-the-minimax-algorithm13];
  */
-export const nextMove = (board, player = PLAYERS.PLAYER_0) => {
+export const nextMove = (board: TBoard, player: TPlayers = PLAYERS.PLAYER_0) => {
   const move = minimax(board, player);
   return move.index;
 };
 
+type TMove = {
+  index: ?number,
+  score: number
+};
 const createMove = (score = -Infinity, index = null) => ({ index, score });
 
-function minimax(board, player) {
+function minimax(board: TBoard, player: TPlayers): TMove {
   if (isWinner(player, board)) {
     return createMove(10);
   }
