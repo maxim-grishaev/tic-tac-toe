@@ -7,8 +7,9 @@ For extra credit make a two player mode of the game where two people can play fr
 TODO
 - [x] Bootstrap
 - [x] AI
+- [x] Tests: test lib methods
+- [x] Cleanup layouts, remove tables
 - [ ] Two-player mode
-- [ ] Cleanup layouts, remove tables
 - [ ] Type checker: Flow or TypeScript
-- [ ] Tests: test lib methods + precommit hook
+- [ ] precommit hook
 - [ ] Better Readme: describe solutions and usage

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { GAME_STATE, getGameState } from '../lib/board';
+import { GAME_STATE, getGameState, isWinner, isLooser } from '../lib/board';
 
 GameStatus.propTypes = {
   board: PropTypes.array.isRequired,
@@ -9,14 +9,26 @@ GameStatus.propTypes = {
   onRestart: PropTypes.func.isRequired,
   children: PropTypes.node
 };
-export default function GameStatus({ board, stepIndex, onRestart, children }) {
+export default function GameStatus({ board, player, stepIndex, currentPlayer, onRestart, children }) {
   const gameState = getGameState(board);
+  const isWaiting = player !== currentPlayer;
+
+  let title = 'Choose your move...';
+  if (isWaiting) {
+    title = 'Wait for your opponent.';
+  }
+  if (gameState === GAME_STATE.DRAW) {
+    title = 'Draw';
+  }
+  if (isLooser(player, board)) {
+    title = 'You loose :(';
+  }
+  if (isWinner(player, board)) {
+    title = 'You win!';
+  }
   return (
     <div>
-      {gameState === GAME_STATE.DRAW && <h1>Draw!</h1>}
-      {gameState === GAME_STATE.WIN_X && <h1>X Wins!</h1>}
-      {gameState === GAME_STATE.WIN_0 && <h1>0 Wins!</h1>}
-      {gameState === GAME_STATE.PLAYING && <h1>Choose your move...</h1>}
+      <h1>{title}</h1>
 
       {children}
 

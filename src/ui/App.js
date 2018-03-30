@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 
-import { createBoard, PLAYERS } from '../lib/board';
+import { createBoard, PLAYERS, getGameState, GAME_STATE } from '../lib/board';
 import { nextMove } from '../lib/player';
 
-import GameStatus from './GameStatus';
-import Layout from './Layout';
-import Board from './Board';
+import PlayerPage from './PlayerPage';
 
 import '../assets/reset.css';
 
@@ -15,21 +13,27 @@ class App extends Component {
   };
   board = createBoard();
 
-  // getCurrentPlayer = () => (this.state.moves % 2 === 0 ? CELL_STATE.PLAYER_X : CELL_STATE.PLAYER_0);
+  getCurrentPlayer = () => (this.state.stepIndex % 2 === 0 ? PLAYERS.PLAYER_X : PLAYERS.PLAYER_0);
 
-  move = index => {
+  makeMove = index => {
     this.setState(state => {
-      this.board[index] = PLAYERS.PLAYER_X;
-
-      const p0Index = nextMove(this.board);
-      if (p0Index != null) {
-        this.board[p0Index] = PLAYERS.PLAYER_0;
-      }
-
+      this.board[index] = this.getCurrentPlayer();
       return {
         stepIndex: state.stepIndex + 1
       };
     });
+  };
+
+  move = index => {
+    const gameState = getGameState(this.board);
+    if (gameState !== GAME_STATE.PLAYING) {
+      return;
+    }
+    this.makeMove(index);
+    setTimeout(() => {
+      const aiIndex = nextMove(this.board);
+      this.makeMove(aiIndex);
+    }, Math.random() * 500);
   };
 
   startAgain = () => {
@@ -43,11 +47,14 @@ class App extends Component {
 
   render() {
     return (
-      <Layout title="Welcome to Tic-Tac-Toe">
-        <GameStatus board={this.board} stepIndex={this.state.stepIndex} onRestart={this.startAgain}>
-          <Board board={this.board} onClick={this.move} />
-        </GameStatus>
-      </Layout>
+      <PlayerPage
+        player={PLAYERS.PLAYER_X}
+        currentPlayer={this.getCurrentPlayer()}
+        board={this.board}
+        stepIndex={this.state.stepIndex}
+        startAgain={this.startAgain}
+        nextMove={this.move}
+      />
     );
   }
 }

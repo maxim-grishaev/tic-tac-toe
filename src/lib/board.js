@@ -1,5 +1,3 @@
-export const BOARD_SIZE = 3;
-
 export const PLAYERS = {
   NOBODY: '_',
   PLAYER_X: 'X',
@@ -70,14 +68,3 @@ export const isDraw = board => {
   const gameState = getGameState(board);
   return gameState === GAME_STATE.DRAW;
 };
-
-export const chopBoard = (board, sliceSize = BOARD_SIZE) =>
-  board.reduce((memo, value, i) => {
-    const rowIndex = Math.floor(i / sliceSize);
-    const colIndex = i % sliceSize;
-    if (colIndex === 0) {
-      memo[rowIndex] = [];
-    }
-    memo[rowIndex][colIndex] = value;
-    return memo;
-  }, []);
