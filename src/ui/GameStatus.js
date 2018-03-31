@@ -6,7 +6,7 @@ import { GAME_STATE, getGameState, isWinner, isLooser } from '../lib/board';
 GameStatus.propTypes = {
   board: PropTypes.array.isRequired,
   stepIndex: PropTypes.number.isRequired,
-  onRestart: PropTypes.func.isRequired,
+  onRestart: PropTypes.func,
   children: PropTypes.node
 };
 export default function GameStatus({ board, player, stepIndex, currentPlayer, onRestart, children }) {
