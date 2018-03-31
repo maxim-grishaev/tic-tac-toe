@@ -11,5 +11,5 @@ TODO
 - [x] Cleanup layouts, remove tables
 - [x] Two-player mode
 - [x] Type checker: Flow or TypeScript
-- [ ] precommit hook
+- [x] precommit hook
 - [ ] Better Readme: describe solutions and usage
