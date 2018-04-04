@@ -13,7 +13,11 @@ class SecondPlayerPage extends Component {
     error: null
   };
 
-  nextMove = index => sendMessage(window.opener, createMessage(TYPES.NEXT_MOVE, index));
+  player = () => this.props.match.params.player;
+
+  pong = (type, extras) => sendMessage(window.opener, createMessage(type, { player: this.player(), ...extras }));
+
+  nextMove = index => this.pong(TYPES.NEXT_MOVE, { index });
 
   componentDidMount() {
     subscribe(({ type, payload }) => {
@@ -21,12 +25,12 @@ class SecondPlayerPage extends Component {
         this.setState(() => ({ ...payload, isReady: true }));
       }
     });
+    this.pong(TYPES.PLAYER_READY);
   }
 
   render() {
-    const title = this.state.player ? `Welcome to Tic-Tac-Toe, ${this.state.player}` : 'Welcome to Tic-Tac-Toe';
     return (
-      <Layout title={title}>
+      <Layout title={`Welcome to Tic-Tac-Toe, Player ${this.player()}!`}>
         {this.state.isReady ? (
           <PlayerPage
             player={this.state.player}

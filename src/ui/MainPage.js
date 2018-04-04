@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { createBoard, PLAYERS, getGameState, GAME_STATE } from '../lib/board';
 import { subscribe, sendMessage, createMessage, TYPES } from '../lib/messages';
 import { nextMove } from '../lib/player';
+import { urls } from '../lib/urls';
 
 import Layout from './Layout';
 import PlayerPage from './PlayerPage';
@@ -15,8 +16,6 @@ class MainPage extends Component {
   };
   board = createBoard();
   playerWindows = {};
-
-  hasWindow = player => this.playerWindows[player] && !this.playerWindows[player].closed;
 
   getCurrentPlayer = () => (this.state.stepIndex % 2 === 0 ? PLAYERS.PLAYER_X : PLAYERS.PLAYER_0);
 
@@ -31,15 +30,24 @@ class MainPage extends Component {
     });
   };
 
-  collectState = () => ({
+  collectState = player => ({
     stepIndex: this.state.stepIndex,
     board: this.board,
-    player: PLAYERS.PLAYER_0,
+    player: player,
     currentPlayer: this.getCurrentPlayer()
   });
 
-  pingPlayer = (player = PLAYERS.PLAYER_0) =>
-    sendMessage(this.playerWindows[player], createMessage(TYPES.STATE, this.collectState()));
+  tryPingPlayer = (player = PLAYERS.PLAYER_0) => {
+    const hasWindow = this.hasOpenedWindow(player);
+    if (hasWindow) {
+      this.pingPlayer(player);
+    }
+    return hasWindow;
+  };
+
+  hasOpenedWindow = player => this.playerWindows[player] && !this.playerWindows[player].closed;
+
+  pingPlayer = player => sendMessage(this.playerWindows[player], createMessage(TYPES.STATE, this.collectState(player)));
 
   pingAi = () =>
     setTimeout(() => {
@@ -55,9 +63,7 @@ class MainPage extends Component {
 
     await this.updateBoard(index);
 
-    if (this.hasWindow(PLAYERS.PLAYER_0)) {
-      this.pingPlayer();
-    } else {
+    if (!this.tryPingPlayer()) {
       this.pingAi();
     }
   };
@@ -68,14 +74,15 @@ class MainPage extends Component {
       return {
         stepIndex: 0
       };
-    }, this.pingPlayer);
+    }, this.tryPingPlayer);
   };
 
   openWindow = player => {
-    const playerWindow = window.open(`/player_${player}`, player);
+    const url = urls.opponent({ player });
+    const playerWindow = window.open(url, player);
 
     const subscribeWindow = () => {
-      this.pingPlayer(player);
+      this.tryPingPlayer(player);
       playerWindow.addEventListener('unload', () => {
         this.playerWindows[player] = null;
         this.forceUpdate();
@@ -92,8 +99,15 @@ class MainPage extends Component {
 
   componentDidMount() {
     subscribe(({ type, payload }) => {
-      if (type === TYPES.NEXT_MOVE) {
-        this.nextMove(payload);
+      switch (type) {
+        case TYPES.NEXT_MOVE:
+          this.nextMove(payload.index, payload.player);
+          break;
+        case TYPES.PLAYER_READY:
+          this.tryPingPlayer(payload.player);
+          break;
+        default:
+          break;
       }
     });
   }
@@ -106,11 +120,17 @@ class MainPage extends Component {
           currentPlayer={this.getCurrentPlayer()}
           board={this.board}
           stepIndex={this.state.stepIndex}
-          startAgain={this.startAgain}
           nextMove={this.nextMove}
         />
 
-        {!this.playerWindows[PLAYERS.PLAYER_0] && <button onClick={this.openWindow0}>Open window for Player 0</button>}
+        <p>
+          <button onClick={this.startAgain}>Restart</button>
+        </p>
+        {!this.hasOpenedWindow(PLAYERS.PLAYER_0) && (
+          <p>
+            <button onClick={this.openWindow0}>Open window for Player 0</button>
+          </p>
+        )}
       </Layout>
     );
   }
